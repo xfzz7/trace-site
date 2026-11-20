@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trace · Walk your photos back across the map</title>
+<meta name="description" content="Trace (迹绎) replays your photos on a map in the order you took them. 3D satellite view, Live Photos, video export. No account, no ads, no uploads.">
+<meta name="theme-color" content="#04060b">
+<meta property="og:title" content="Trace · Walk your photos back across the map">
+<meta property="og:description" content="Replay every trip on a map. Everything stays on your iPhone.">
+<meta property="og:image" content="assets/brand/og.jpg">
+<meta name="apple-itunes-app" content="app-id=6769310458">
+<link rel="icon" href="assets/brand/icon.png">
+<link rel="apple-touch-icon" href="assets/brand/icon.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <a class="nav__brand" href="#top" aria-label="Trace"><img src="assets/brand/icon.png" alt="" width="28" height="28"><span>Trace</span></a>
+  <nav class="nav__links" aria-label="Sections">
+    <a href="#story" data-i18n="nav_story">Story</a>
+    <a href="#scrub" data-i18n="nav_try">Try it</a>
+    <a href="#features" data-i18n="nav_features">Features</a>
+    <a href="#privacy" data-i18n="nav_privacy">Privacy</a>
+  </nav>
+  <div class="nav__right">
+    <button class="pill pill--ghost" id="langBtn" type="button" aria-label="Language">中文</button>
+    <a class="pill pill--solid store" href="https://apps.apple.com/app/id6769310458" data-i18n="get">Get</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <svg class="hero__route" id="heroRoute" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#5db2ff" stop-opacity="0"/><stop offset=".25" stop-color="#5db2ff"/><stop offset="1" stop-color="#9be7ff"/></linearGradient>
+      <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <path id="heroPath" d="M-40 760 C 180 720, 260 520, 430 560 S 700 780, 860 600 S 1100 260, 1280 330 S 1500 520, 1660 300" fill="none" stroke="url(#rg)" stroke-width="3" stroke-linecap="round" stroke-dasharray="3 12" opacity=".5"/>
+    <path id="heroPathLive" d="M-40 760 C 180 720, 260 520, 430 560 S 700 780, 860 600 S 1100 260, 1280 330 S 1500 520, 1660 300" fill="none" stroke="url(#rg)" stroke-width="4" stroke-linecap="round" filter="url(#glow)"/>
+    <g id="heroPins"></g>
+  </svg>
+
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <p class="eyebrow reveal" data-i18n="hero_eyebrow">iPhone · Photos · Maps</p>
+      <h1 class="hero__title" id="heroTitle" data-i18n-words="hero_title">Walk your photos back across the map.</h1>
+      <p class="hero__sub reveal" data-i18n="hero_sub">Pick photos with locations. Trace replays the trip on a map, in the order you took them.</p>
+      <div class="hero__cta reveal">
+        <a class="btn btn--primary store" href="https://apps.apple.com/app/id6769310458"><span data-i18n="cta_store">Download on the App Store</span></a>
+        <a class="btn btn--glass" href="#film"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span data-i18n="cta_film">Watch the film</span></a>
+      </div>
+      <ul class="hero__facts reveal">
+        <li data-i18n="fact1">No account</li><li data-i18n="fact2">No ads</li><li data-i18n="fact3">Nothing uploaded</li>
+      </ul>
+    </div>
+
+    <div class="hero__device" id="heroDevice">
+      <div class="device tilt" data-tilt>
+        <div class="device__glow"></div>
+        <div class="device__body">
+          <div class="device__screen">
+            <video class="vid" data-vid="std" muted loop playsinline preload="metadata" aria-label="Trace replaying a trip on a 3D map"><source type="video/mp4"></video>
+          </div>
+          <i class="device__island"></i>
+        </div>
+      </div>
+      <figure class="float float--a glass"><img src="assets/photos/goldengate.jpg" alt=""><figcaption data-i18n="chip_a">Golden Gate Bridge</figcaption></figure>
+      <figure class="float float--b glass"><img src="assets/photos/bixby.jpg" alt=""><figcaption data-i18n="chip_b">Bixby Creek Bridge</figcaption></figure>
+    </div>
+  </div>
+  <a class="scrollcue" href="#story" aria-label="Scroll"><span></span></a>
+</section>
+
+<!-- STORY (sticky device) -->
+<section class="story" id="story">
+  <div class="story__head wrap reveal">
+    <p class="eyebrow" data-i18n="story_eyebrow">How it feels</p>
+    <h2 class="h2" data-i18n="story_title">A trip, in four moves.</h2>
+  </div>
+  <div class="story__grid wrap">
+    <div class="story__steps">
+      <article class="step" data-step="0"><span class="step__n">01</span><h3 data-i18n="s1_t">Pick a batch.</h3><p data-i18n="s1_p">Choose photos and videos that carry a location. Trace reads the capture time and the place, nothing else.</p></article>
+      <article class="step" data-step="1"><span class="step__n">02</span><h3 data-i18n="s2_t">Press play.</h3><p data-i18n="s2_p">Photos light up one by one, in the order you took them, while the camera follows your route across cities and ridgelines.</p></article>
+      <article class="step" data-step="2"><span class="step__n">03</span><h3 data-i18n="s3_t">Tilt into 3D.</h3><p data-i18n="s3_p">Switch to satellite and the map gets height. Hills and buildings rise under a route that is a real line through them.</p></article>
+      <article class="step" data-step="3"><span class="step__n">04</span><h3 data-i18n="s4_t">Keep the record.</h3><p data-i18n="s4_p">Distance, days and the places you passed are gathered into a summary that stays in the app. Come back any time.</p></article>
+    </div>
+    <div class="story__stage">
+      <div class="device device--stage" id="stageDevice">
+        <div class="device__glow"></div>
+        <div class="device__body">
+          <div class="device__screen" id="stageScreen" data-active="0">
+            <!-- 0: picker -->
+            <div class="layer picker" data-layer="0" aria-hidden="true">
+              <div class="picker__bar"><b data-i18n="pk_title">Recents</b><span id="pkCount">0</span></div>
+              <div class="picker__grid" id="pkGrid"></div>
+              <div class="picker__cta glass"><span data-i18n="pk_cta">Start My Voyage</span></div>
+            </div>
+            <!-- 1: std video -->
+            <video class="layer vid" data-layer="1" data-vid="std" muted loop playsinline preload="none" aria-label="Replay on a 3D map"><source type="video/mp4"></video>
+            <!-- 2: sat video -->
+            <video class="layer vid" data-layer="2" data-vid="sat" muted loop playsinline preload="none" aria-label="Replay on satellite imagery"><source type="video/mp4"></video>
+            <!-- 3: summary shot -->
+            <img class="layer" data-layer="3" id="stageShot" src="assets/shots/en/3.jpg" alt="Trip summary screen">
+          </div>
+          <i class="device__island"></i>
+        </div>
+      </div>
+      <div class="story__dots" id="storyDots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    </div>
+  </div>
+</section>
+
+<!-- SCRUB -->
+<section class="scrub" id="scrub">
+  <div class="wrap">
+    <div class="center reveal">
+      <p class="eyebrow" data-i18n="scrub_eyebrow">Try it right here</p>
+      <h2 class="h2" data-i18n="scrub_title">Drag through a trip.</h2>
+      <p class="lede" data-i18n="scrub_sub">This is the sample voyage built into the app. Scrub the timeline and watch the camera follow the route.</p>
+    </div>
+    <div class="scrub__card glass reveal">
+      <div class="map" id="map">
+        <svg id="mapSvg" viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice" aria-label="Interactive route map">
+          <defs>
+            <radialGradient id="mapbg" cx="50%" cy="40%" r="80%"><stop offset="0" stop-color="#14263d"/><stop offset="1" stop-color="#070b14"/></radialGradient>
+            <filter id="terrain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".0045 .006" numOctaves="3" seed="12"/><feColorMatrix type="matrix" values="0 0 0 0 .36  0 0 0 0 .66  0 0 0 0 .95  1.4 0 0 0 -.2"/><feComponentTransfer><feFuncA type="discrete" tableValues="0 .22 0 .22 0 .22 0 .22 0 .22 0 .22 0 .22 0 .22"/></feComponentTransfer></filter>
+            <filter id="pinglow"><feGaussianBlur stdDeviation="5"/></filter>
+            <clipPath id="clipRound"><rect x="0" y="0" width="800" height="520" rx="0"/></clipPath>
+          </defs>
+          <g id="cam">
+            <rect x="-1600" y="-1040" width="4000" height="2600" fill="url(#mapbg)"/>
+            <rect x="-1600" y="-1040" width="4000" height="2600" filter="url(#terrain)" opacity=".5"/>
+            <g id="grat" stroke="#9cc8ff" stroke-opacity=".07" stroke-width="1"></g>
+            <path id="routeBase" fill="none" stroke="#9cc8ff" stroke-opacity=".35" stroke-width="2.5" stroke-dasharray="2 9" stroke-linecap="round"/>
+            <path id="routeLive" fill="none" stroke="#5db2ff" stroke-width="4.5" stroke-linecap="round" filter="url(#pinglow)" opacity=".8"/>
+            <path id="routeLive2" fill="none" stroke="#bfe6ff" stroke-width="2.5" stroke-linecap="round"/>
+            <g id="wps"></g>
+            <g id="you"><circle r="22" fill="#5db2ff" opacity=".25"><animate attributeName="r" values="12;28;12" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values=".4;0;.4" dur="2.4s" repeatCount="indefinite"/></circle><circle r="8" fill="#fff"/><circle r="5.5" fill="#2f8bff"/></g>
+          </g>
+        </svg>
+        <div class="photocard glass" id="photoCard">
+          <img id="pcImg" src="" alt="">
+          <div class="photocard__meta"><span class="arrow" aria-hidden="true">➤</span><b id="pcName">—</b><span id="pcIdx">1 / 5</span></div>
+        </div>
+        <div class="map__hud glass"><span id="hudLat">—</span><span id="hudLon">—</span></div>
+      </div>
+      <div class="scrub__controls">
+        <button class="round" id="playBtn" type="button" aria-label="Play"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path id="playIcon" d="M8 5v14l11-7z"/></svg></button>
+        <input id="scrubRange" type="range" min="0" max="1000" value="0" aria-label="Timeline">
+        <span class="scrub__count" id="scrubCount">1 / 5</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="center reveal">
+      <p class="eyebrow" data-i18n="feat_eyebrow">Small details</p>
+      <h2 class="h2" data-i18n="feat_title">More than still photos.</h2>
+    </div>
+    <div class="bento">
+
+      <article class="card glass reveal b-live">
+        <div class="card__media live" id="liveCard"><img src="assets/photos/mcway.jpg" alt=""><span class="badge">LIVE</span><i class="shine"></i></div>
+        <h3 data-i18n="f1_t">Live Photos and video</h3><p data-i18n="f1_p">Live Photos move and videos play in full. Three seconds per photo turns a trip into a short film.</p>
+      </article>
+
+      <article class="card glass reveal b-tilt">
+        <div class="card__media tilt3d"><canvas id="tiltCanvas" width="560" height="360"></canvas></div>
+        <div class="slider"><span data-i18n="f2_hint">Tilt</span><input type="range" id="pitch" min="0" max="70" value="48" aria-label="Pitch"></div>
+        <h3 data-i18n="f2_t">3D, at your angle</h3><p data-i18n="f2_p">Tilt the map so hills and buildings have height and your route is a real line through them.</p>
+      </article>
+
+      <article class="card glass reveal b-pin">
+        <div class="card__media pinmap" id="pinMap">
+          <div class="pinmap__grid"></div>
+          <button class="pinmap__pin" id="pin" type="button" aria-label="Drag to place"><svg viewBox="0 0 24 34" width="34" height="46"><path d="M12 0C5.400 0 0 5.200 0 11.700 0 20 12 34 12 34s12-14 12-22.300C24 5.200 18.600 0 12 0z" fill="#ff5a4f"/><circle cx="12" cy="11.500" r="4.500" fill="#fff"/></svg></button>
+          <div class="pinmap__label glass"><b id="pinName">—</b><span id="pinCoord">—</span></div>
+        </div>
+        <h3 data-i18n="f3_t">Fill in missing places</h3><p data-i18n="f3_p">Photo without a location? Search or drag a pin, and optionally write it back into the photo itself.</p>
+        <button class="chipbtn" id="writeBtn" type="button" data-i18n="f3_btn">Write to photo</button>
+      </article>
+
+      <article class="card glass reveal b-rec">
+        <div class="card__media rec" id="recCard">
+          <div class="rec__screen">
+            <div class="rec__count" id="recCount">3</div>
+            <svg class="rec__ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="6"/><circle id="recArc" cx="60" cy="60" r="52" fill="none" stroke="#ff5a4f" stroke-width="6" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="327" transform="rotate(-90 60 60)"/></svg>
+            <div class="rec__done glass" id="recDone"><span>✓</span><b data-i18n="f4_done">Saved to Photos</b></div>
+          </div>
+          <button class="recbtn" id="recBtn" type="button" aria-label="Record"><i></i></button>
+        </div>
+        <span class="tag" data-i18n="new">New</span>
+        <h3 data-i18n="f4_t">Record the replay</h3><p data-i18n="f4_p">Turn on recording and the voyage plays out as a video, original sound included. Save it or share it in one tap.</p>
+      </article>
+
+      <article class="card glass reveal b-sum">
+        <div class="card__media strip" id="strip"></div>
+        <h3 data-i18n="f5_t">A record at the end</h3><p data-i18n="f5_p">Distance, days and the places you passed, gathered into a summary that stays in the app.</p>
+      </article>
+
+      <article class="card glass reveal b-globe">
+        <div class="card__media globe"><canvas id="globe" width="520" height="360"></canvas></div>
+        <div class="txt"><h3 data-i18n="f6_t">Every voyage, pinned</h3><p data-i18n="f6_p">Your home map keeps every trip. Reopen any of them and keep remembering.</p></div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- FILM -->
+<section class="film" id="film">
+  <div class="wrap">
+    <div class="center reveal">
+      <p class="eyebrow" data-i18n="film_eyebrow">30 seconds</p>
+      <h2 class="h2" data-i18n="film_title">The film.</h2>
+    </div>
+    <div class="film__frame glass reveal" id="filmFrame">
+      <video id="filmVid" playsinline preload="metadata" poster="film/poster-en.jpg" controls>
+        <source type="video/mp4">
+      </video>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVACY -->
+<section class="privacy" id="privacy">
+  <div class="wrap">
+    <div class="center reveal">
+      <p class="eyebrow eyebrow--dark" data-i18n="pv_eyebrow">Private by construction</p>
+      <h2 class="h2 h2--dark" data-i18n="pv_title">Your photos never leave your iPhone.</h2>
+      <p class="lede lede--dark" data-i18n="pv_sub">Switch airplane mode on. The replay logic doesn't notice, because it never needed the internet.</p>
+    </div>
+    <div class="pv reveal">
+      <div class="pv__scene" id="pvScene">
+        <div class="pv__phone"><div class="pv__thumbs" id="pvThumbs"></div><span class="pv__lock">🔒</span></div>
+        <div class="pv__wall"></div>
+        <div class="pv__cloud"><svg viewBox="0 0 64 44" width="76" height="52"><path d="M16 40a12 12 0 0 1-1-24 16 16 0 0 1 31-2 11 11 0 0 1 3 26z" fill="currentColor"/></svg><b>✕</b></div>
+        <div class="pv__air"><button class="chipbtn pv__send" id="sendBtn" type="button"><span data-i18n="pv_air">Try to upload</span></button></div>
+      </div>
+      <ul class="pv__counts">
+        <li><b>0</b><span data-i18n="pv_c1">accounts</span></li>
+        <li><b>0</b><span data-i18n="pv_c2">ads</span></li>
+        <li><b>0</b><span data-i18n="pv_c3">analytics SDKs</span></li>
+        <li><b>0</b><span data-i18n="pv_c4">uploads</span></li>
+      </ul>
+      <p class="pv__note" data-i18n="pv_note">Maps and place names come from Apple's system services. Every other calculation runs on the device.</p>
+      <a class="textlink" href="legal/privacy-policy.html" data-i18n="pv_link">Read the privacy policy</a>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery" aria-label="Screenshots">
+  <div class="marquee" id="marquee"></div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final" id="download">
+  <svg class="final__route" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true"><path id="finalPath" d="M0 220 C 200 60, 340 280, 560 150 S 900 40, 1200 130" fill="none" stroke="url(#rg)" stroke-width="3" stroke-linecap="round"/></svg>
+  <div class="wrap center">
+    <img class="final__icon reveal" src="assets/brand/icon.png" alt="" width="96" height="96">
+    <h2 class="h1 reveal" data-i18n="final_title">Your next trip is already in your library.</h2>
+    <a class="btn btn--primary btn--lg store reveal" href="https://apps.apple.com/app/id6769310458"><span data-i18n="cta_store">Download on the App Store</span></a>
+    <p class="fine reveal" data-i18n="final_note">iPhone &amp; iPad · iOS 17 or later · Free</p>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <span>© 2026 Trace · 迹绎</span>
+    <span class="foot__links"><a href="legal/privacy-policy.html" data-i18n="ft_privacy">Privacy Policy</a><a href="legal/support.html" data-i18n="ft_support">Support</a></span>
+    <span class="fine" data-i18n="ft_tm">Apple, iPhone and App Store are trademarks of Apple Inc.</span>
+  </div>
+</footer>
+
+<script src="js/i18n.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
