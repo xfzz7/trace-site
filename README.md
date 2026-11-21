@@ -9,7 +9,8 @@
 </p>
 
 <p align="center">
-  <strong><a href="https://apps.apple.com/app/id6769310458">在 App Store 获取</a></strong>
+  <strong><a href="https://xfzz7.github.io/trace-site/">访问官网</a></strong>
+  &nbsp;·&nbsp; <strong><a href="https://apps.apple.com/cn/app/%E8%BF%B9%E7%BB%8E-%E7%85%A7%E7%89%87%E8%BD%A8%E8%BF%B9%E5%9B%BE/id6769310458">在 App Store 获取</a></strong>
   &nbsp;·&nbsp; <a href="film/trace-replay-zh.mp4">观看江南旅程</a>
   &nbsp;·&nbsp; <a href="#trace-for-iphone-and-ipad">English</a>
 </p>
@@ -72,7 +73,7 @@ Pick photos with location data and replay your trip on a map in the order you to
 - **Add a missing location.** Search for a place or drop a pin, then keep that edit for the replay or write it back to the photo.
 - **Keep or share the trip.** Reopen it from your trip history, or record the replay and save it as a video. Photos and trip history are processed on your device.
 
-**[Get Trace on the App Store](https://apps.apple.com/app/id6769310458)** · [Watch the California coast film](film/trace-replay-en.mp4)
+**[Get Trace on the App Store](https://apps.apple.com/cn/app/%E8%BF%B9%E7%BB%8E-%E7%85%A7%E7%89%87%E8%BD%A8%E8%BF%B9%E5%9B%BE/id6769310458)** · [Official website](https://xfzz7.github.io/trace-site/?lang=en) · [Watch the California coast film](film/trace-replay-en.mp4)
 
 ---
 
