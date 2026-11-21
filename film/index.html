@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>迹绎 · 新版宣传片</title>
+<link rel="icon" href="../favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
+<style>
+  html { color-scheme: dark; font-family: system-ui, sans-serif; background: #17221f; color: #f1eadd; }
+  body { margin: 0; }
+  main { width: min(100% - 32px, 660px); margin: 24px auto 32px; }
+  header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 14px; }
+  h1 { margin: 0; font-size: clamp(17px, 4vw, 23px); }
+  a { color: inherit; }
+  video { display: block; width: min(100%, 416px, calc((100svh - 126px) * 9 / 16)); aspect-ratio: 9 / 16; margin: 0 auto; border-radius: 12px; background: #0f1613; }
+  footer { display: flex; justify-content: space-between; gap: 16px; margin-top: 14px; font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1 id="title">迹绎 · 新版宣传片</h1>
+    <a id="language" href="?lang=en" hreflang="en">English</a>
+  </header>
+  <video id="film" controls playsinline preload="metadata" poster="poster-zh.jpg" src="trace-replay-zh.mp4" aria-labelledby="title"></video>
+  <footer>
+    <span>24 秒 · 1080 × 1920</span>
+    <a id="download" href="trace-replay-zh.mp4" download>下载 MP4</a>
+  </footer>
+</main>
+<script>
+  if (new URLSearchParams(location.search).get('lang') === 'en') {
+    document.documentElement.lang = 'en';
+    document.title = 'Trace · Launch Film';
+    document.querySelector('#title').textContent = document.title;
+    const language = document.querySelector('#language');
+    language.href = '?lang=zh';
+    language.hreflang = 'zh-Hans';
+    language.textContent = '简体中文';
+    const film = document.querySelector('#film');
+    film.poster = 'poster-en.jpg';
+    film.src = 'trace-replay-en.mp4';
+    const download = document.querySelector('#download');
+    download.href = 'trace-replay-en.mp4';
+    download.textContent = 'Download MP4';
+    document.querySelector('footer span').textContent = '24 seconds · 1080 × 1920';
+  }
+</script>
+</body>
+</html>

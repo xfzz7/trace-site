@@ -1,289 +1,223 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hans">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Trace · Walk your photos back across the map</title>
-<meta name="description" content="Trace (迹绎) replays your photos on a map in the order you took them. 3D satellite view, Live Photos, video export. No account, no ads, no uploads.">
-<meta name="theme-color" content="#04060b">
-<meta property="og:title" content="Trace · Walk your photos back across the map">
-<meta property="og:description" content="Replay every trip on a map. Everything stays on your iPhone.">
-<meta property="og:image" content="assets/brand/og.jpg">
+<title>迹绎 Trace · 照片记得你去过哪里</title>
+<meta name="description" content="选几张带位置的照片，迹绎会按拍摄顺序在地图上回放这趟旅程。无需账号，没有广告。">
 <meta name="apple-itunes-app" content="app-id=6769310458">
-<link rel="icon" href="assets/brand/icon.png">
+<meta property="og:title" content="迹绎 Trace · 照片记得你去过哪里">
+<meta property="og:description" content="把相册里的旅程，按拍摄顺序在地图上重新走一遍。">
+<meta property="og:image" content="assets/brand/og.jpg">
+<meta name="theme-color" content="#f1ece2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14130f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/brand/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/brand/icon.png">
-<link rel="stylesheet" href="css/style.css">
+<link rel="preload" href="assets/fonts/serif-sc.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/site.css">
+<script>
+  (function () {
+    var d = document.documentElement, q = new URLSearchParams(location.search), l, t;
+    try { l = q.get('lang') || localStorage.getItem('trace.lang'); t = localStorage.getItem('trace.theme'); } catch (e) {}
+    if (l !== 'zh' && l !== 'en') l = /^zh/i.test(navigator.language || '') ? 'zh' : 'en';
+    d.lang = l === 'zh' ? 'zh-Hans' : 'en'; d.dataset.lang = l;
+    if (t === 'light' || t === 'dark') d.dataset.theme = t;
+  })();
+</script>
 </head>
 <body>
-<canvas id="stars" aria-hidden="true"></canvas>
 
-<!-- NAV -->
-<header class="nav" id="nav">
-  <a class="nav__brand" href="#top" aria-label="Trace"><img src="assets/brand/icon.png" alt="" width="28" height="28"><span>Trace</span></a>
-  <nav class="nav__links" aria-label="Sections">
-    <a href="#story" data-i18n="nav_story">Story</a>
-    <a href="#scrub" data-i18n="nav_try">Try it</a>
-    <a href="#features" data-i18n="nav_features">Features</a>
-    <a href="#privacy" data-i18n="nav_privacy">Privacy</a>
+<header class="nav">
+  <a class="brand" href="#top" aria-label="迹绎 Trace">
+    <img src="assets/brand/icon.png" alt="" width="30" height="30">
+    <span class="brand__word" data-t="brand">迹绎</span>
+  </a>
+  <nav class="nav__tools">
+    <button class="tool" id="langBtn" type="button" aria-label="Switch language">EN</button>
+    <button class="tool tool--icon" id="themeBtn" type="button" aria-label="Toggle dark mode">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9A7 7 0 0 1 12 3z" fill="currentColor"/></svg>
+    </button>
+    <a class="tool tool--solid" href="https://apps.apple.com/app/id6769310458" data-t="nav_get">下载</a>
   </nav>
-  <div class="nav__right">
-    <button class="pill pill--ghost" id="langBtn" type="button" aria-label="Language">中文</button>
-    <a class="pill pill--solid store" href="https://apps.apple.com/app/id6769310458" data-i18n="get">Get</a>
-  </div>
 </header>
 
 <main id="top">
 
-<!-- HERO -->
-<section class="hero" id="hero">
-  <svg class="hero__route" id="heroRoute" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <defs>
-      <linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#5db2ff" stop-opacity="0"/><stop offset=".25" stop-color="#5db2ff"/><stop offset="1" stop-color="#9be7ff"/></linearGradient>
-      <filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    </defs>
-    <path id="heroPath" d="M-40 760 C 180 720, 260 520, 430 560 S 700 780, 860 600 S 1100 260, 1280 330 S 1500 520, 1660 300" fill="none" stroke="url(#rg)" stroke-width="3" stroke-linecap="round" stroke-dasharray="3 12" opacity=".5"/>
-    <path id="heroPathLive" d="M-40 760 C 180 720, 260 520, 430 560 S 700 780, 860 600 S 1100 260, 1280 330 S 1500 520, 1660 300" fill="none" stroke="url(#rg)" stroke-width="4" stroke-linecap="round" filter="url(#glow)"/>
-    <g id="heroPins"></g>
-  </svg>
-
-  <div class="hero__inner">
-    <div class="hero__copy">
-      <p class="eyebrow reveal" data-i18n="hero_eyebrow">iPhone · Photos · Maps</p>
-      <h1 class="hero__title" id="heroTitle" data-i18n-words="hero_title">Walk your photos back across the map.</h1>
-      <p class="hero__sub reveal" data-i18n="hero_sub">Pick photos with locations. Trace replays the trip on a map, in the order you took them.</p>
-      <div class="hero__cta reveal">
-        <a class="btn btn--primary store" href="https://apps.apple.com/app/id6769310458"><span data-i18n="cta_store">Download on the App Store</span></a>
-        <a class="btn btn--glass" href="#film"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg><span data-i18n="cta_film">Watch the film</span></a>
-      </div>
-      <ul class="hero__facts reveal">
-        <li data-i18n="fact1">No account</li><li data-i18n="fact2">No ads</li><li data-i18n="fact3">Nothing uploaded</li>
-      </ul>
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero__copy">
+    <p class="kicker"><span class="dot"></span><span data-t="hero_kicker">一个把照片放回地图的 App</span></p>
+    <h1 class="display" data-t="hero_title" data-html>照片记得<br>你去过哪里。</h1>
+    <p class="lede" data-t="hero_lede">选几张带位置的照片，迹绎会按拍摄顺序在地图上回放这趟旅程。</p>
+    <div class="cta">
+      <a class="btn btn--ink" href="https://apps.apple.com/app/id6769310458"><span data-t="cta_store">在 App Store 下载</span></a>
+      <a class="btn btn--line" href="#journey"><span data-t="cta_how">看看它怎么做</span><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2v11M3 8.500l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.700" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
-
-    <div class="hero__device" id="heroDevice">
-      <div class="device tilt" data-tilt>
-        <div class="device__glow"></div>
-        <div class="device__body">
-          <div class="device__screen">
-            <video class="vid" data-vid="std" muted loop playsinline preload="metadata" aria-label="Trace replaying a trip on a 3D map"><source type="video/mp4"></video>
-          </div>
-          <i class="device__island"></i>
-        </div>
-      </div>
-      <figure class="float float--a glass"><img src="assets/photos/goldengate.jpg" alt=""><figcaption data-i18n="chip_a">Golden Gate Bridge</figcaption></figure>
-      <figure class="float float--b glass"><img src="assets/photos/bixby.jpg" alt=""><figcaption data-i18n="chip_b">Bixby Creek Bridge</figcaption></figure>
-    </div>
+    <p class="fine" data-t="hero_fine">iPhone 与 iPad · 无需账号 · 照片不离开手机</p>
   </div>
-  <a class="scrollcue" href="#story" aria-label="Scroll"><span></span></a>
-</section>
 
-<!-- STORY (sticky device) -->
-<section class="story" id="story">
-  <div class="story__head wrap reveal">
-    <p class="eyebrow" data-i18n="story_eyebrow">How it feels</p>
-    <h2 class="h2" data-i18n="story_title">A trip, in four moves.</h2>
-  </div>
-  <div class="story__grid wrap">
-    <div class="story__steps">
-      <article class="step" data-step="0"><span class="step__n">01</span><h3 data-i18n="s1_t">Pick a batch.</h3><p data-i18n="s1_p">Choose photos and videos that carry a location. Trace reads the capture time and the place, nothing else.</p></article>
-      <article class="step" data-step="1"><span class="step__n">02</span><h3 data-i18n="s2_t">Press play.</h3><p data-i18n="s2_p">Photos light up one by one, in the order you took them, while the camera follows your route across cities and ridgelines.</p></article>
-      <article class="step" data-step="2"><span class="step__n">03</span><h3 data-i18n="s3_t">Tilt into 3D.</h3><p data-i18n="s3_p">Switch to satellite and the map gets height. Hills and buildings rise under a route that is a real line through them.</p></article>
-      <article class="step" data-step="3"><span class="step__n">04</span><h3 data-i18n="s4_t">Keep the record.</h3><p data-i18n="s4_p">Distance, days and the places you passed are gathered into a summary that stays in the app. Come back any time.</p></article>
-    </div>
-    <div class="story__stage">
-      <div class="device device--stage" id="stageDevice">
-        <div class="device__glow"></div>
-        <div class="device__body">
-          <div class="device__screen" id="stageScreen" data-active="0">
-            <!-- 0: picker -->
-            <div class="layer picker" data-layer="0" aria-hidden="true">
-              <div class="picker__bar"><b data-i18n="pk_title">Recents</b><span id="pkCount">0</span></div>
-              <div class="picker__grid" id="pkGrid"></div>
-              <div class="picker__cta glass"><span data-i18n="pk_cta">Start My Voyage</span></div>
-            </div>
-            <!-- 1: std video -->
-            <video class="layer vid" data-layer="1" data-vid="std" muted loop playsinline preload="none" aria-label="Replay on a 3D map"><source type="video/mp4"></video>
-            <!-- 2: sat video -->
-            <video class="layer vid" data-layer="2" data-vid="sat" muted loop playsinline preload="none" aria-label="Replay on satellite imagery"><source type="video/mp4"></video>
-            <!-- 3: summary shot -->
-            <img class="layer" data-layer="3" id="stageShot" src="assets/shots/en/3.jpg" alt="Trip summary screen">
-          </div>
-          <i class="device__island"></i>
-        </div>
+  <div class="hero__visual">
+    <div class="phone phone--hero">
+      <div class="phone__screen">
+        <video class="vid" data-src="sat" muted loop playsinline preload="metadata" poster="assets/video/zh-sat.jpg"></video>
       </div>
-      <div class="story__dots" id="storyDots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     </div>
+    <figure class="stamp stamp--a">
+      <img data-photo="0" alt="">
+      <figcaption><b data-stop-name="0"></b><span data-stop-time="0"></span></figcaption>
+    </figure>
+    <figure class="stamp stamp--b">
+      <img data-photo="4" alt="">
+      <figcaption><b data-stop-name="4"></b><span data-stop-time="4"></span></figcaption>
+    </figure>
   </div>
 </section>
 
-<!-- SCRUB -->
-<section class="scrub" id="scrub">
+<!-- ============ JOURNEY (scroll-driven) ============ -->
+<section class="journey" id="journey">
+  <div class="journey__stage" aria-hidden="true">
+    <div class="plate" id="plate">
+      <svg class="plate__map" id="plateMap" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="plate__tiles" id="plateTiles"></div>
+      <div class="ticker" id="ticker"><span class="ticker__day" id="tickerDay"></span><span class="ticker__place" id="tickerPlace"></span></div>
+      <div class="ticket" id="ticket">
+        <div class="ticket__top">
+          <span class="ticket__label" data-t="ticket_label">旅程记录</span>
+          <b class="ticket__title" data-trip="title"></b>
+          <span class="ticket__dates" data-trip="dates"></span>
+        </div>
+        <div class="ticket__stats">
+          <div><b data-trip="days"></b><span data-t="u_days">天</span></div>
+          <div><b data-trip="dist"></b><span data-trip="unit"></span></div>
+          <div><b>5</b><span data-t="u_moments">个瞬间</span></div>
+        </div>
+        <div class="ticket__strip" id="ticketStrip"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="journey__steps">
+    <article class="beat" data-beat="0">
+      <span class="beat__n">01</span>
+      <h2 class="title" data-t="b1_t">它们本来躺在相册里。</h2>
+      <p data-t="b1_p">十月里的三天，五张照片，夹在几百张截图、收据和表情包中间。你很少再翻到它们。</p>
+    </article>
+    <article class="beat" data-beat="1">
+      <span class="beat__n">02</span>
+      <h2 class="title" data-t="b2_t">但每一张都记着时间和地点。</h2>
+      <p data-t="b2_p">带位置信息的照片记录了拍摄时间和地点。迹绎用它们给照片排序，在地图上标出每一站。</p>
+    </article>
+    <article class="beat" data-beat="2">
+      <span class="beat__n">03</span>
+      <h2 class="title" data-t="b3_t">按时间连起来，就是你走过的路。</h2>
+      <p data-t="b3_p" class="beat__route"></p>
+    </article>
+    <article class="beat" data-beat="3">
+      <span class="beat__n">04</span>
+      <h2 class="title" data-t="b4_t">走完，留下一页记录。</h2>
+      <p data-t="b4_p">天数、里程、经过的地方，自动整理好，存在 App 里。哪天想起来，点开接着看。</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ PLAYBACK ============ -->
+<section class="play" id="play">
   <div class="wrap">
-    <div class="center reveal">
-      <p class="eyebrow" data-i18n="scrub_eyebrow">Try it right here</p>
-      <h2 class="h2" data-i18n="scrub_title">Drag through a trip.</h2>
-      <p class="lede" data-i18n="scrub_sub">This is the sample voyage built into the app. Scrub the timeline and watch the camera follow the route.</p>
-    </div>
-    <div class="scrub__card glass reveal">
-      <div class="map" id="map">
-        <svg id="mapSvg" viewBox="0 0 800 520" preserveAspectRatio="xMidYMid slice" aria-label="Interactive route map">
-          <defs>
-            <radialGradient id="mapbg" cx="50%" cy="40%" r="80%"><stop offset="0" stop-color="#14263d"/><stop offset="1" stop-color="#070b14"/></radialGradient>
-            <filter id="terrain" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency=".0045 .006" numOctaves="3" seed="12"/><feColorMatrix type="matrix" values="0 0 0 0 .36  0 0 0 0 .66  0 0 0 0 .95  1.4 0 0 0 -.2"/><feComponentTransfer><feFuncA type="discrete" tableValues="0 .22 0 .22 0 .22 0 .22 0 .22 0 .22 0 .22 0 .22"/></feComponentTransfer></filter>
-            <filter id="pinglow"><feGaussianBlur stdDeviation="5"/></filter>
-            <clipPath id="clipRound"><rect x="0" y="0" width="800" height="520" rx="0"/></clipPath>
-          </defs>
-          <g id="cam">
-            <rect x="-1600" y="-1040" width="4000" height="2600" fill="url(#mapbg)"/>
-            <rect x="-1600" y="-1040" width="4000" height="2600" filter="url(#terrain)" opacity=".5"/>
-            <g id="grat" stroke="#9cc8ff" stroke-opacity=".07" stroke-width="1"></g>
-            <path id="routeBase" fill="none" stroke="#9cc8ff" stroke-opacity=".35" stroke-width="2.5" stroke-dasharray="2 9" stroke-linecap="round"/>
-            <path id="routeLive" fill="none" stroke="#5db2ff" stroke-width="4.5" stroke-linecap="round" filter="url(#pinglow)" opacity=".8"/>
-            <path id="routeLive2" fill="none" stroke="#bfe6ff" stroke-width="2.5" stroke-linecap="round"/>
-            <g id="wps"></g>
-            <g id="you"><circle r="22" fill="#5db2ff" opacity=".25"><animate attributeName="r" values="12;28;12" dur="2.4s" repeatCount="indefinite"/><animate attributeName="opacity" values=".4;0;.4" dur="2.4s" repeatCount="indefinite"/></circle><circle r="8" fill="#fff"/><circle r="5.5" fill="#2f8bff"/></g>
-          </g>
-        </svg>
-        <div class="photocard glass" id="photoCard">
-          <img id="pcImg" src="" alt="">
-          <div class="photocard__meta"><span class="arrow" aria-hidden="true">➤</span><b id="pcName">—</b><span id="pcIdx">1 / 5</span></div>
+    <header class="sec-head">
+      <p class="kicker"><span class="dot"></span><span data-t="play_kicker">然后，按下播放</span></p>
+      <h2 class="title title--xl" data-t="play_t">镜头沿着你的路线，<br>一张一张飞过去。</h2>
+      <p class="lede" data-t="play_p">照片按拍摄顺序亮起，地图跟着移动。实况照片会动，视频完整播放。下面是 App 里录下来的真实画面。</p>
+    </header>
+
+    <div class="duo">
+      <figure class="duo__item">
+        <div class="phone">
+          <div class="phone__screen"><video class="vid" data-src="std" muted loop playsinline preload="none"></video></div>
         </div>
-        <div class="map__hud glass"><span id="hudLat">—</span><span id="hudLon">—</span></div>
-      </div>
-      <div class="scrub__controls">
-        <button class="round" id="playBtn" type="button" aria-label="Play"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path id="playIcon" d="M8 5v14l11-7z"/></svg></button>
-        <input id="scrubRange" type="range" min="0" max="1000" value="0" aria-label="Timeline">
-        <span class="scrub__count" id="scrubCount">1 / 5</span>
-      </div>
+        <figcaption><b data-t="std_t">标准地图 · 3D</b><span data-t="std_p">看清街道和建筑，再沿着照片之间的连线回顾旅程。</span></figcaption>
+      </figure>
+      <figure class="duo__item">
+        <div class="phone">
+          <div class="phone__screen"><video class="vid" data-src="sat" muted loop playsinline preload="none"></video></div>
+        </div>
+        <figcaption><b data-t="sat_t">卫星 · 3D</b><span data-t="sat_p">湖面、山脊和屋顶，都是你当时真正经过的样子。</span></figcaption>
+      </figure>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section class="features" id="features">
+<!-- ============ DETAILS ============ -->
+<section class="details" id="details">
   <div class="wrap">
-    <div class="center reveal">
-      <p class="eyebrow" data-i18n="feat_eyebrow">Small details</p>
-      <h2 class="h2" data-i18n="feat_title">More than still photos.</h2>
-    </div>
-    <div class="bento">
+    <header class="sec-head sec-head--left">
+      <p class="kicker"><span class="dot"></span><span data-t="det_kicker">几个你会用到的细节</span></p>
+      <h2 class="title title--xl" data-t="det_t">不打扰，但想得周到。</h2>
+    </header>
 
-      <article class="card glass reveal b-live">
-        <div class="card__media live" id="liveCard"><img src="assets/photos/mcway.jpg" alt=""><span class="badge">LIVE</span><i class="shine"></i></div>
-        <h3 data-i18n="f1_t">Live Photos and video</h3><p data-i18n="f1_p">Live Photos move and videos play in full. Three seconds per photo turns a trip into a short film.</p>
-      </article>
-
-      <article class="card glass reveal b-tilt">
-        <div class="card__media tilt3d"><canvas id="tiltCanvas" width="560" height="360"></canvas></div>
-        <div class="slider"><span data-i18n="f2_hint">Tilt</span><input type="range" id="pitch" min="0" max="70" value="48" aria-label="Pitch"></div>
-        <h3 data-i18n="f2_t">3D, at your angle</h3><p data-i18n="f2_p">Tilt the map so hills and buildings have height and your route is a real line through them.</p>
-      </article>
-
-      <article class="card glass reveal b-pin">
-        <div class="card__media pinmap" id="pinMap">
-          <div class="pinmap__grid"></div>
-          <button class="pinmap__pin" id="pin" type="button" aria-label="Drag to place"><svg viewBox="0 0 24 34" width="34" height="46"><path d="M12 0C5.400 0 0 5.200 0 11.700 0 20 12 34 12 34s12-14 12-22.300C24 5.200 18.600 0 12 0z" fill="#ff5a4f"/><circle cx="12" cy="11.500" r="4.500" fill="#fff"/></svg></button>
-          <div class="pinmap__label glass"><b id="pinName">—</b><span id="pinCoord">—</span></div>
-        </div>
-        <h3 data-i18n="f3_t">Fill in missing places</h3><p data-i18n="f3_p">Photo without a location? Search or drag a pin, and optionally write it back into the photo itself.</p>
-        <button class="chipbtn" id="writeBtn" type="button" data-i18n="f3_btn">Write to photo</button>
-      </article>
-
-      <article class="card glass reveal b-rec">
-        <div class="card__media rec" id="recCard">
-          <div class="rec__screen">
-            <div class="rec__count" id="recCount">3</div>
-            <svg class="rec__ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="6"/><circle id="recArc" cx="60" cy="60" r="52" fill="none" stroke="#ff5a4f" stroke-width="6" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="327" transform="rotate(-90 60 60)"/></svg>
-            <div class="rec__done glass" id="recDone"><span>✓</span><b data-i18n="f4_done">Saved to Photos</b></div>
-          </div>
-          <button class="recbtn" id="recBtn" type="button" aria-label="Record"><i></i></button>
-        </div>
-        <span class="tag" data-i18n="new">New</span>
-        <h3 data-i18n="f4_t">Record the replay</h3><p data-i18n="f4_p">Turn on recording and the voyage plays out as a video, original sound included. Save it or share it in one tap.</p>
-      </article>
-
-      <article class="card glass reveal b-sum">
-        <div class="card__media strip" id="strip"></div>
-        <h3 data-i18n="f5_t">A record at the end</h3><p data-i18n="f5_p">Distance, days and the places you passed, gathered into a summary that stays in the app.</p>
-      </article>
-
-      <article class="card glass reveal b-globe">
-        <div class="card__media globe"><canvas id="globe" width="520" height="360"></canvas></div>
-        <div class="txt"><h3 data-i18n="f6_t">Every voyage, pinned</h3><p data-i18n="f6_p">Your home map keeps every trip. Reopen any of them and keep remembering.</p></div>
-      </article>
-
-    </div>
+    <ol class="ledger">
+      <li>
+        <span class="ledger__n">A</span>
+        <div><h3 data-t="d1_t">先看一段示例</h3><p data-t="d1_p">不想马上授权相册？打开就能看一段内置旅程，不读你的照片，也不留进记录。</p></div>
+      </li>
+      <li>
+        <span class="ledger__n">B</span>
+        <div><h3 data-t="d2_t">实况照片与视频</h3><p data-t="d2_p">实况照片会动起来，视频完整播放。一趟旅程放完，就是一部短片。</p></div>
+      </li>
+      <li>
+        <span class="ledger__n">C</span>
+        <div><h3 data-t="d3_t">补上缺失的位置</h3><p data-t="d3_p">有些照片没带位置？搜索地点或拖动图钉补上，还可以把位置写回照片本身。</p></div>
+      </li>
+      <li>
+        <span class="ledger__n">D</span>
+        <div><h3><span data-t="d4_t">把回放录成视频</span></h3><p data-t="d4_p">打开「播放时录制」，整段回放连同原声录成视频，存进相册或直接分享出去。</p></div>
+      </li>
+      <li>
+        <span class="ledger__n">E</span>
+        <div><h3 data-t="d5_t">每一段都钉在首页</h3><p data-t="d5_p">首页地图收着你走过的每一趟。随时点开，重新回放。</p></div>
+      </li>
+      <li>
+        <span class="ledger__n">F</span>
+        <div><h3 data-t="d6_t">iPad 上也一样</h3><p data-t="d6_p">大屏幕上看卫星 3D，更像在翻一本会动的旅行相册。</p></div>
+      </li>
+    </ol>
   </div>
 </section>
 
-<!-- FILM -->
-<section class="film" id="film">
-  <div class="wrap">
-    <div class="center reveal">
-      <p class="eyebrow" data-i18n="film_eyebrow">30 seconds</p>
-      <h2 class="h2" data-i18n="film_title">The film.</h2>
-    </div>
-    <div class="film__frame glass reveal" id="filmFrame">
-      <video id="filmVid" playsinline preload="metadata" poster="film/poster-en.jpg" controls>
-        <source type="video/mp4">
-      </video>
-    </div>
-  </div>
-</section>
-
-<!-- PRIVACY -->
+<!-- ============ PRIVACY ============ -->
 <section class="privacy" id="privacy">
-  <div class="wrap">
-    <div class="center reveal">
-      <p class="eyebrow eyebrow--dark" data-i18n="pv_eyebrow">Private by construction</p>
-      <h2 class="h2 h2--dark" data-i18n="pv_title">Your photos never leave your iPhone.</h2>
-      <p class="lede lede--dark" data-i18n="pv_sub">Switch airplane mode on. The replay logic doesn't notice, because it never needed the internet.</p>
-    </div>
-    <div class="pv reveal">
-      <div class="pv__scene" id="pvScene">
-        <div class="pv__phone"><div class="pv__thumbs" id="pvThumbs"></div><span class="pv__lock">🔒</span></div>
-        <div class="pv__wall"></div>
-        <div class="pv__cloud"><svg viewBox="0 0 64 44" width="76" height="52"><path d="M16 40a12 12 0 0 1-1-24 16 16 0 0 1 31-2 11 11 0 0 1 3 26z" fill="currentColor"/></svg><b>✕</b></div>
-        <div class="pv__air"><button class="chipbtn pv__send" id="sendBtn" type="button"><span data-i18n="pv_air">Try to upload</span></button></div>
-      </div>
-      <ul class="pv__counts">
-        <li><b>0</b><span data-i18n="pv_c1">accounts</span></li>
-        <li><b>0</b><span data-i18n="pv_c2">ads</span></li>
-        <li><b>0</b><span data-i18n="pv_c3">analytics SDKs</span></li>
-        <li><b>0</b><span data-i18n="pv_c4">uploads</span></li>
-      </ul>
-      <p class="pv__note" data-i18n="pv_note">Maps and place names come from Apple's system services. Every other calculation runs on the device.</p>
-      <a class="textlink" href="legal/privacy-policy.html" data-i18n="pv_link">Read the privacy policy</a>
-    </div>
+  <div class="wrap privacy__in">
+    <h2 class="title title--xl" data-t="pv_t">你的旅程，<br>只在你的手机里。</h2>
+    <ul class="vows">
+      <li data-t="pv_1">不需要注册，没有账号。</li>
+      <li data-t="pv_2">照片、位置和路线都不上传。</li>
+      <li data-t="pv_3">没有广告，没有统计和追踪 SDK。</li>
+      <li data-t="pv_4">旅程记录保存在 App 内。</li>
+    </ul>
+    <p class="privacy__note"><span data-t="pv_note">地图和地名来自 Apple 系统服务，其余计算都在本机完成。</span> <a href="legal/privacy-policy.html" data-t="pv_link">阅读隐私政策</a></p>
   </div>
 </section>
 
-<!-- GALLERY -->
-<section class="gallery" id="gallery" aria-label="Screenshots">
-  <div class="marquee" id="marquee"></div>
-</section>
-
-<!-- FINAL CTA -->
+<!-- ============ FINAL ============ -->
 <section class="final" id="download">
-  <svg class="final__route" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true"><path id="finalPath" d="M0 220 C 200 60, 340 280, 560 150 S 900 40, 1200 130" fill="none" stroke="url(#rg)" stroke-width="3" stroke-linecap="round"/></svg>
-  <div class="wrap center">
-    <img class="final__icon reveal" src="assets/brand/icon.png" alt="" width="96" height="96">
-    <h2 class="h1 reveal" data-i18n="final_title">Your next trip is already in your library.</h2>
-    <a class="btn btn--primary btn--lg store reveal" href="https://apps.apple.com/app/id6769310458"><span data-i18n="cta_store">Download on the App Store</span></a>
-    <p class="fine reveal" data-i18n="final_note">iPhone &amp; iPad · iOS 17 or later · Free</p>
+  <div class="wrap final__in">
+    <img class="final__icon" src="assets/brand/icon.png" alt="" width="88" height="88">
+    <h2 class="display display--md" data-t="final_t" data-html>下一段旅程，<br>已经在你的相册里了。</h2>
+    <a class="btn btn--ink btn--lg" href="https://apps.apple.com/app/id6769310458"><span data-t="cta_store">在 App Store 下载</span></a>
+    <p class="fine" data-t="final_fine">iPhone 与 iPad · iOS 17 及以上</p>
   </div>
 </section>
+
 </main>
 
 <footer class="foot">
   <div class="wrap foot__in">
-    <span>© 2026 Trace · 迹绎</span>
-    <span class="foot__links"><a href="legal/privacy-policy.html" data-i18n="ft_privacy">Privacy Policy</a><a href="legal/support.html" data-i18n="ft_support">Support</a></span>
-    <span class="fine" data-i18n="ft_tm">Apple, iPhone and App Store are trademarks of Apple Inc.</span>
+    <span class="foot__brand">迹绎 · Trace</span>
+    <span class="foot__links"><a href="legal/privacy-policy.html" data-t="ft_privacy">隐私政策</a><a href="legal/support.html" data-t="ft_support">技术支持</a></span>
+    <span class="foot__tm" data-t="ft_tm">Apple、iPhone、iPad 和 App Store 是 Apple Inc. 的商标。</span>
   </div>
 </footer>
 
-<script src="js/i18n.js"></script>
-<script src="js/main.js"></script>
+<script src="js/site.js"></script>
 </body>
 </html>
