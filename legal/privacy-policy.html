@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Trace Privacy Policy · Trace</title>
+<title>迹绎 Trace 隐私政策</title>
+<meta name="description" content="了解迹绎如何在设备上处理旅行照片和位置，以及 Apple 系统地图和地名服务的使用方式。">
+<link rel="canonical" href="https://xfzz7.github.io/trace-site/legal/privacy-policy.html">
 <link rel="icon" href="../favicon.ico" sizes="16x16 32x32 48x48">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/favicon-32.png">
 <link rel="stylesheet" href="../css/legal.css">
@@ -108,9 +110,9 @@
 <script>
 (function(){
   var T={en:"Trace Privacy Policy \u00b7 Trace",zh:"\u8ff9\u7ece\u9690\u79c1\u653f\u7b56 \u00b7 \u8ff9\u7ece"};
-  var saved=null;try{saved=localStorage.getItem('lang')}catch(e){}
+  var saved=null;try{saved=localStorage.getItem('trace.lang') || localStorage.getItem('lang')}catch(e){}
   var lang=saved||((navigator.language||'').toLowerCase().indexOf('zh')===0?'zh':'en');
-  function apply(l){lang=l;document.documentElement.lang=l==='zh'?'zh-Hans':'en';document.title=T[l];try{localStorage.setItem('lang',l)}catch(e){}}
+  function apply(l){lang=l;document.documentElement.lang=l==='zh'?'zh-Hans':'en';document.title=T[l];try{localStorage.setItem('trace.lang',l)}catch(e){}}
   document.getElementById('lang').onclick=function(){apply(lang==='zh'?'en':'zh')};
   apply(lang);
 })();

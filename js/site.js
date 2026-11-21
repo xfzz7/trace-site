@@ -1,89 +1,13 @@
-/* 迹绎 Trace · site v3 */
+/* 迹绎 Trace · voyage animation */
 (function () {
   'use strict';
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var root = document.documentElement;
-  var assetRoot = new URL('../', document.currentScript.src).href;
   var motion = matchMedia('(prefers-reduced-motion: reduce)');
-  var lang = root.dataset.lang === 'en' ? 'en' : 'zh';
-
-  /* ================= copy ================= */
-  var T = {
-    zh: {
-      brand: '迹绎', nav_get: '下载',
-      hero_kicker: '一个把照片放回地图的 App',
-      hero_title: '照片记得<br>你去过哪里。',
-      hero_lede: '选几张带位置的照片，迹绎会按拍摄顺序在地图上回放这趟旅程。',
-      cta_store: '前往 App Store', cta_how: '看看它怎么做',
-      hero_fine: 'iPhone 与 iPad · 无需账号 · 照片不离开手机',
-      b1_t: '它们本来躺在相册里。',
-      b1_p: '十月里的三天，五张照片，夹在几百张截图、收据和表情包中间。你很少再翻到它们。',
-      b2_t: '但每一张都记着时间和地点。',
-      b2_p: '带位置信息的照片记录了拍摄时间和地点。迹绎用它们给照片排序，在地图上标出每一站。',
-      b3_t: '按时间连起来，就是你走过的路。',
-      b4_t: '走完，留下一页记录。',
-      b4_p: '天数、里程、经过的地方，自动整理好，存在 App 里。哪天想起来，点开接着看。',
-      ticket_label: '旅程记录', u_days: '天', u_moments: '个瞬间',
-      play_kicker: '然后，按下播放',
-      play_t: '镜头沿着你的路线，<br>一张一张飞过去。',
-      play_p: '照片按拍摄顺序亮起，地图跟着移动。实况照片会动，视频完整播放。下面是 App 里录下来的真实画面。',
-      std_t: '标准地图 · 3D', std_p: '看清街道和建筑，再沿着照片之间的连线回顾旅程。',
-      sat_t: '卫星 · 3D', sat_p: '湖面、山脊和屋顶，都是你当时真正经过的样子。',
-      det_kicker: '几个你会用到的细节', det_t: '不打扰，但想得周到。',
-      d1_t: '先看一段示例', d1_p: '不想马上授权相册？打开就能看一段内置旅程，不读你的照片，也不留进记录。',
-      d2_t: '实况照片与视频', d2_p: '实况照片会动起来，视频完整播放。一趟旅程放完，就是一部短片。',
-      d3_t: '补上缺失的位置', d3_p: '有些照片没带位置？搜索地点或拖动图钉补上，还可以把位置写回照片本身。',
-      d4_t: '把回放录成视频', d4_p: '打开「播放时录制」，整段回放连同原声录成视频，存进相册或直接分享出去。',
-      d5_t: '每一段都钉在首页', d5_p: '首页地图收着你走过的每一趟。随时点开，重新回放。',
-      d6_t: 'iPad 上也一样', d6_p: '大屏幕上看卫星 3D，更像在翻一本会动的旅行相册。',
-      pv_t: '你的旅程，<br>只在你的手机里。',
-      pv_1: '不需要注册，没有账号。', pv_2: '照片、位置和路线都不上传。',
-      pv_3: '没有广告，没有统计和追踪 SDK。', pv_4: '旅程记录保存在 App 内。',
-      pv_note: '地图和地名来自 Apple 系统服务，其余计算都在本机完成。', pv_link: '阅读隐私政策',
-      final_t: '下一段旅程，<br>已经在你的相册里了。',
-      final_fine: 'iPhone 与 iPad · iOS 17 及以上',
-      ft_privacy: '隐私政策', ft_support: '技术支持', ft_tm: 'Apple、iPhone、iPad 和 App Store 是 Apple Inc. 的商标。',
-      doc_title: '迹绎 Trace · 照片记得你去过哪里', lang_btn: 'EN', day: function (n) { return '第 ' + n + ' 天'; }
-    },
-    en: {
-      brand: 'Trace', nav_get: 'Get the app',
-      hero_kicker: 'An app that puts photos back on the map',
-      hero_title: 'Your photos remember where you’ve been.',
-      hero_lede: 'Pick photos with locations. Trace puts them on a map in the order you took them and replays the trip.',
-      cta_store: 'Get it on the App Store', cta_how: 'See how it works',
-      hero_fine: 'iPhone & iPad · No account · Photos never leave your phone',
-      b1_t: 'They were sitting in your library.',
-      b1_p: 'Three days in October, five photos, buried between hundreds of screenshots, receipts and memes. You rarely scroll back that far.',
-      b2_t: 'Each one knows when and where.',
-      b2_p: 'Photos with location data record when and where they were taken. Trace uses that information to order your photos and place them on the map.',
-      b3_t: 'In order, they become the road you took.',
-      b4_t: 'At the end, a page to keep.',
-      b4_p: 'Days, distance and the places you passed, gathered for you and kept in the app. Open it again whenever the trip comes back to mind.',
-      ticket_label: 'Voyage record', u_days: 'days', u_moments: 'moments',
-      play_kicker: 'Then press play',
-      play_t: 'The camera follows your route, photo by photo.',
-      play_p: 'Photos light up in the order you took them while the map moves with you. Live Photos move and videos play in full. These are real recordings from the app.',
-      std_t: 'Standard · 3D', std_p: 'See the streets and buildings around each stop.',
-      sat_t: 'Satellite · 3D', sat_p: 'The water, ridgelines and rooftops you actually passed.',
-      det_kicker: 'Details you will reach for', det_t: 'Quiet, but thought through.',
-      d1_t: 'Watch a sample first', d1_p: 'Not ready to grant photo access? A built-in trip plays right away. It never reads your library or lands in your history.',
-      d2_t: 'Live Photos and video', d2_p: 'Live Photos come alive and videos play in full. By the end, the trip is a short film.',
-      d3_t: 'Fill in missing places', d3_p: 'Photo without a location? Search or drag a pin, and optionally write the place back into the photo.',
-      d4_t: 'Record the replay', d4_p: 'Turn on recording and the whole replay, original sound included, becomes a video to save or share.',
-      d5_t: 'Every trip, pinned', d5_p: 'Your home map keeps every voyage. Open any saved trip to replay it.',
-      d6_t: 'Just as good on iPad', d6_p: 'Satellite 3D on a big screen feels like flipping through a travel album that moves.',
-      pv_t: 'Your trips live on your phone. Only there.',
-      pv_1: 'No sign-up. No account.', pv_2: 'Photos, places and routes are never uploaded.',
-      pv_3: 'No ads. No analytics or tracking SDKs.', pv_4: 'Trip history is stored in the app.',
-      pv_note: 'Maps and place names come from Apple’s system services. Everything else is calculated on the device.', pv_link: 'Read the privacy policy',
-      final_t: 'Your next trip is already in your library.',
-      final_fine: 'iPhone & iPad · iOS 17 or later',
-      ft_privacy: 'Privacy Policy', ft_support: 'Support', ft_tm: 'Apple, iPhone, iPad and App Store are trademarks of Apple Inc.',
-      doc_title: 'Trace · Your photos remember where you’ve been', lang_btn: '中文', day: function (n) { return 'Day ' + n; }
-    }
-  };
+  var lang = root.lang === 'en' ? 'en' : 'zh';
+  var assetRoot = new URL('../', document.currentScript.src).href;
 
   /* ================= trips (same data as the app's built-in samples) ================= */
   var TRIPS = {
@@ -137,32 +61,10 @@
     }
   };
 
-  /* ================= i18n ================= */
-  function applyCopy() {
-    var d = T[lang];
-    $$('[data-t]').forEach(function (el) {
-      var v = d[el.getAttribute('data-t')];
-      if (typeof v !== 'string') return;
-      if (el.hasAttribute('data-html')) el.innerHTML = v; else if (/<br>/.test(v)) el.innerHTML = v; else el.textContent = v;
-    });
-    document.title = d.doc_title;
-    $('#langBtn').textContent = d.lang_btn;
-    $('#langBtn').setAttribute('aria-label', lang === 'zh' ? 'Switch to English' : '切换到中文');
-    root.lang = lang === 'zh' ? 'zh-Hans' : 'en';
-    root.dataset.lang = lang;
-
-    var trip = TRIPS[lang];
-    $$('[data-photo]').forEach(function (im) { var s = trip.stops[+im.getAttribute('data-photo')]; im.src = photo(s.img); im.alt = s.name; });
-    $$('[data-stop-name]').forEach(function (el) { el.textContent = trip.stops[+el.getAttribute('data-stop-name')].name; });
-    $$('[data-stop-time]').forEach(function (el) { el.textContent = trip.stops[+el.getAttribute('data-stop-time')].t; });
-    $$('[data-trip]').forEach(function (el) { el.textContent = trip[el.getAttribute('data-trip')]; });
-    var r = $('.beat__route');
-    r.innerHTML = trip.stops.map(function (s) { return '<b>' + s.name + '</b>'; }).join('<i>→</i>') + (lang === 'zh' ? '。' : '.') + '<br>' + trip.routeLine;
-  }
   function photo(n) { return assetRoot + 'assets/photos/' + n + '.jpg'; }
 
   /* ================= videos ================= */
-  var videos = $$('video[data-src]');
+  var videos = $$('video.vid');
   var visibleVideos = new Set();
 
   function syncVideo(video) {
@@ -181,16 +83,6 @@
     });
   }, { threshold: .25 });
 
-  function setVideos() {
-    $$('video[data-src]').forEach(function (v) {
-      var base = assetRoot + 'assets/video/' + lang + '-' + v.getAttribute('data-src');
-      if (v.getAttribute('src') === base + '.mp4') return;
-      v.poster = base + '.jpg';
-      v.src = base + '.mp4';
-      syncVideo(v);
-      v.setAttribute('aria-label', lang === 'zh' ? '迹绎在地图上回放一段旅程' : 'Trace replaying a trip on the map');
-    });
-  }
   videos.forEach(function (video) { vio.observe(video); });
   motion.addEventListener('change', function () {
     videos.forEach(syncVideo);
@@ -397,7 +289,7 @@
       dots.forEach(function (d, i) { d.setAttribute('r', i === hot ? 11 : 7); });
       if (hot >= 0) {
         var s = TRIPS[lang].stops[hot];
-        $('#tickerDay').textContent = T[lang].day(s.d) + ' · ' + s.t;
+        $('#tickerDay').textContent = (lang === 'zh' ? '第 ' + s.d + ' 天' : 'Day ' + s.d) + ' · ' + s.t;
         $('#tickerPlace').textContent = s.name;
       }
     }
@@ -426,24 +318,18 @@
   });
 
   /* ================= controls ================= */
-  function setLang(l) {
-    lang = l;
-    try { localStorage.setItem('trace.lang', l); } catch (e) {}
-    var url = new URL(location.href);
-    if (url.searchParams.has('lang')) {
-      url.searchParams.set('lang', l);
-      try { history.replaceState(null, '', url); } catch (e) {}
-    }
-    applyCopy(); setVideos(); buildMap(); lastF = -1; lastHot = -2; ticket.classList.remove('is-on'); render();
-  }
-  $('#langBtn').addEventListener('click', function () { setLang(lang === 'zh' ? 'en' : 'zh'); });
   $('#themeBtn').addEventListener('click', function () {
     var dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
     root.dataset.theme = dark ? 'light' : 'dark';
     try { localStorage.setItem('trace.theme', root.dataset.theme); } catch (e) {}
   });
 
-  applyCopy(); setVideos(); buildMap(); render(); nav();
+  var trip = TRIPS[lang];
+  $$('[data-trip]').forEach(function (element) {
+    element.textContent = trip[element.dataset.trip];
+  });
+
+  buildMap(); render(); nav();
   addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', function () { lastF = -1; onScroll(); });
 })();
